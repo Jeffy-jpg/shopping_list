@@ -1,9 +1,15 @@
-from typing import Tuple
+import json
+import os
 import customtkinter as ctk
+from typing import Tuple
+
 
 class ShoppingListPanel (ctk.CTkFrame):
     def __init__(self,master):
         super().__init__(master, width=350, corner_radius=8)
+
+        self.DATA_FILE = "shopping_data.json"
+
 
         self.shopping_data = {
             "Groceries": [{"name":"milk", "checked": False, "quantity":1, "price":2.50 }],
@@ -11,6 +17,8 @@ class ShoppingListPanel (ctk.CTkFrame):
             "Clothing":[{"name":"T-Shirt", "checked": False, "quantity":1, "price":50.00 }]
         }
         self.current_category = "Groceries"
+
+        self.load_from_file()
 
         self.checkbox_widget = []
         self.row_frames = []
@@ -88,6 +96,7 @@ class ShoppingListPanel (ctk.CTkFrame):
         self.shopping_data[self.current_category][index]["name"]=updated_name
         self.shopping_data[self.current_category][index]["quantity"] = updated_qty
         self.shopping_data[self.current_category][index]["price"]= updated_price
+        self.save_to_file()
         self.refresh_list(self.current_category)
 
     def append_new_item(self, name, quantity, price):
@@ -99,19 +108,48 @@ class ShoppingListPanel (ctk.CTkFrame):
             "quantity": quantity,
             "price": price
         })
+        self.save_to_file()
         self.refresh_list(self.current_category)
     
     def toggle_item(self, index, checkbox_widget):
         new_state = checkbox_widget.get() == 1
         self.shopping_data[self.current_category][index]["checked"] = new_state
+        self.save_to_file()
 
     def delete_item(self, index):
         self.shopping_data[self.current_category].pop(index)
         self.refresh_list(self.current_category)
+        self.save_to_file()
 
     def delete_category_data(self, category_name):
         if category_name in self.shopping_data:
             del self.shopping_data[category_name]
+            self.save_to_file()
+
+    def save_to_file(self):
+        try:
+            with open(self.DATA_FILE, "w") as f:
+                json.dump(self.shopping_data, f, indent=4)
+            print("Data Successfully Saved")
+
+        except Exception as e: 
+            print(f"Error saving file: {e}")
+
+    def load_from_file(self):
+        if os.path.exists(self.DATA_FILE):
+            try:
+                with open(self.DATA_FILE, "r") as f:
+                    self.shopping_data = json.load(f)
+
+                if self.shopping_data:
+                    self.current_category = list(self.shopping_data.keys())[0]
+                print("Successfully Loaded Data")
+
+            except Exception as e:
+                print(f"Error Loading Data: {e}")
+                
+
+
 
 class AddItemModal(ctk.CTkToplevel):
     def __init__(self, parent_panel):
@@ -166,7 +204,7 @@ class AddItemModal(ctk.CTkToplevel):
                 price = 0.0
 
             self.parent_panel.append_new_item(name, quantity, price)
-            self.destory()
+            self.destroy()
 
 class EditItemModal(ctk.CTkToplevel):
     def __init__(self, parent_panel, item_idex, item_dict):

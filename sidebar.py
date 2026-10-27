@@ -1,3 +1,5 @@
+import os
+import json
 import customtkinter as ctk
 from tkinter import messagebox
 
@@ -6,9 +8,21 @@ class CategorySidebar(ctk.CTkFrame):
         super().__init__(master, width=250, corner_radius=0, fg_color= "transparent")
 
 
-        self.categories = ["Groceries", "Hardware", "Clothing"]
+        DATA_FILE = "shopping_data.json"
+        default_cats = ["Groceries", "Hardware", "Clothing"]
+
+        if os.path.exists(DATA_FILE):
+            try:
+                with open(DATA_FILE, "r") as f:
+                    data = json.load(f)
+                    self.categories = list(data.keys()) if data else default_cats
+            except Exception:
+                self.categories = default_cats
+        else: 
+            self.categories = default_cats
+
         self.button_widget = []
-        self.selected_category = 'Groceries'
+        self.selected_category = self.categories[0] if self.categories else "Groceries"
 
         self.category_title = ctk.CTkLabel(self, text="Shopping Categories",
                                             font=("Segoe UI", 18, "bold"),
@@ -32,7 +46,7 @@ class CategorySidebar(ctk.CTkFrame):
         self.add_cat_button = ctk.CTkButton(self.add_frame, text= "+", width=40,
                                             fg_color="#10B981", hover_color="#059669",
                                             command=self.add_new_category)
-        self.add_cat_button.pack(fill="x", pady=(0,10))
+        self.add_cat_button.pack(fill="x", pady=(0,5))
 
         self.del_cat_button=ctk.CTkButton(self.controls_frame, text = "Delete Selected Category",
                                           fg_color="#EF4444", hover_color="#DC2626",
@@ -93,6 +107,8 @@ class CategorySidebar(ctk.CTkFrame):
                                        )
         if not confirm:
             return
+
+        getattr(self.master, "list_frame").delete_category_data(target)
 
         self.categories.remove(target)
         self.selected_category = self.categories[0]
