@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from sidebar import CategorySidebar
 from list import ShoppingListPanel
-#from analytics import data_analysis
+from analytics import AnalyticsPanel
 
 ctk.set_appearance_mode("light")
 #main window
@@ -18,16 +18,18 @@ class App(ctk.CTk):
         self.grid_columnconfigure(2, weight=2)
         self.grid_rowconfigure(0, weight=1)
 
-        #widget frame
+
+        #side_bar Frame
         self.sidebar_frame = CategorySidebar(self)
         self.sidebar_frame.grid(row=0, column=0, sticky="nsew", padx=(20,0), pady=20)
 
+        #item list frame
         self.list_frame = ShoppingListPanel(self)
         self.list_frame.grid(row=0, column=1,sticky="nsew", padx=20, pady=20)
 
-        self.noti_panel_frame = ctk.CTkFrame(self, width=350, corner_radius=8)
-        self.noti_panel_frame.grid(row=0, column=2, sticky="nsew", padx=(0,20), pady=20)
-        self.noti_panel_frame.grid_propagate(False)
+        #charts Frame
+        self.analytics_frame = AnalyticsPanel(self)
+        self.analytics_frame.grid(row=0, column = 2, sticky = "nsew", padx=(0,20), pady=20)
 
     def change_category(self, category_name):
         self.list_frame.refresh_list(category_name)
