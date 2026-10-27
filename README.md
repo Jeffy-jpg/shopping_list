@@ -1,2 +1,2 @@
 # shopping_list
-A shopping list that makes your ife a little bit easier
+A shopping list that makes your life a little bit easier
