@@ -135,6 +135,12 @@ class ShoppingListPanel (ctk.CTkFrame):
         except Exception as e: 
             print(f"Error saving file: {e}")
 
+
+        
+        analytics = getattr(self.master, "analytics_frame", None)
+        if analytics:
+            analytics.update_analytics()
+
     def load_from_file(self):
         if os.path.exists(self.DATA_FILE):
             try:
