@@ -7,7 +7,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 class AnalyticsPanel(ctk.CTkFrame):
     def __init__(self, master):
-        super().__init__(master, width= 350, corner_radius= 8)
+        super().__init__(master, corner_radius= 8)
         self.grid_propagate(False)
 
         self.total_budget = 0.0
@@ -17,11 +17,11 @@ class AnalyticsPanel(ctk.CTkFrame):
         self.grid_rowconfigure(2, weight=2)
         self.grid_rowconfigure(3, weight=1)
 
-
+        self.grid_columnconfigure(0, weight=1)
 
         #Frame One: The Pie Chart
         self.frame1 = ctk.CTkFrame(self, fg_color="transparent")
-        self.frame1.grid(row=0, column =0, sticky ="nsew", padx=15, pady=10)
+        self.frame1.grid(row=0, column =0, sticky ="ew", padx=15, pady=10)
 
         self.no_data_label = ctk.CTkLabel(self.frame1, text ="check item to view spending breakdown",
                                           font=("Segoe UI", 12, "italic"), text_color= "#64748B")
@@ -30,7 +30,7 @@ class AnalyticsPanel(ctk.CTkFrame):
 
         #Frame Two: The Progress Bar
         self.frame2 = ctk.CTkFrame(self, fg_color="transparent")
-        self.frame2.grid(row=1, column=0, sticky ="nsew", padx=15, pady=5)
+        self.frame2.grid(row=1, column=0, sticky ="ew", padx=15, pady=5)
 
         self.progress_bar = ctk.CTkProgressBar(self.frame2, height=15, fg_color= "#E2E8F0",
                                                 progress_color="#10B981")
@@ -43,7 +43,7 @@ class AnalyticsPanel(ctk.CTkFrame):
 
         #Frame Three: Readable Data 
         self.frame3 = ctk.CTkFrame(self, fg_color="transparent")
-        self.frame3.grid(row=2, column=0, sticky= "nsew", padx=15, pady=5)
+        self.frame3.grid(row=2, column=0, sticky= "ew", padx=15, pady=5)
 
         self.spent_label = ctk.CTkLabel(self.frame3, text="Total Spend: $0.000",
                                         font=("Segoe UI", 14, "bold"), text_color="#EF4444")
@@ -55,7 +55,7 @@ class AnalyticsPanel(ctk.CTkFrame):
 
         #Frame Four: Budget Trip Entry: 
         self.frame4 = ctk.CTkFrame(self, fg_color="transparent")
-        self.frame4.grid(row=3, column=0, sticky = "nsew", padx=15, pady=5)
+        self.frame4.grid(row=3, column=0, sticky = "ew", padx=15, pady=5)
 
         self.entry_label = ctk.CTkLabel(self.frame4, text="Set Trip Budget ($):",
                                          font=("Segoe UI", 12))
@@ -63,7 +63,7 @@ class AnalyticsPanel(ctk.CTkFrame):
 
         self.budget_entry = ctk.CTkEntry(self.frame4, placeholder_text="e.g 200", width=120)
         self.budget_entry.pack(side="left", fill="x", expand = True)
-        self.budget_entry.bind("<KeyRelease>", self.on_budget_changed)
+        self.budget_entry.bind("<Return>", self.on_budget_changed)
 
     def on_budget_changed(self, event):
         raw_val = self.budget_entry.get().strip()
@@ -112,7 +112,7 @@ class AnalyticsPanel(ctk.CTkFrame):
             if progress_percentage >=1.0:
                 self.progress_bar.configure(progress_color = "#EF4444")
             else:
-                self.progress_bar.configure(progress_Color = "#10B981")
+                self.progress_bar.configure(progress_color = "#10B981")
 
         else: 
             self.progress_bar.set(0)
@@ -131,13 +131,20 @@ class AnalyticsPanel(ctk.CTkFrame):
 
             labels = list( category_spending.keys())
             sizes = list(category_spending.values())
-            colors = ['#EF4444', '#06B6D4', '#6366F1',
-                    '#84CC16', '#A855F7', '#1E293B',
-                    '#64748B', '#F8FAFC', '#F1F5F9',
-                    '#475569']
+            colors = ['#8800FF', '#06B6D4', '#FB00FF',
+                    '#1EFF00', '#FF0000', '#000000',
+                    '#0090FF', '#2C6337', '#0400FF',
+                    '#B0B0B0']
 
-            ax.pie(sizes, labels = labels, colors = colors[:len(labels)], autopct='%1.1f%%', 
+            ax.pie(sizes, colors = colors[:len(labels)], autopct='%1.1f%%', 
                    startangle = 140, textprops = {'fontsize':9, 'color': '#1E293B'})
+            
+            ax.legend  ( labels = labels,
+                        loc="center left",
+                        bbox_to_anchor=(1.0,0.5),
+                        fontsize=8,
+                        frameon=True)
+            
             ax.axis('equal')
             plt.tight_layout()
 

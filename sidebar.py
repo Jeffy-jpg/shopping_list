@@ -82,8 +82,8 @@ class CategorySidebar(ctk.CTkFrame):
         new_cat = self.cat_entry.get().strip().capitalize()
 
         if new_cat:
-            if len(self.categories) >=10:
-                messagebox.showwarning("Limit Reached!","You Cannot Add More Than 10 Categories.")
+            if len(self.categories) >=5: #limit set to 5 so the pie chart doesn't break
+                messagebox.showwarning("Limit Reached!","You Cannot Add More Than 5 Categories.")
                 return
             
             if new_cat not in self.categories:
