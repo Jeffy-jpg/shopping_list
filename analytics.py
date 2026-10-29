@@ -136,7 +136,7 @@ class AnalyticsPanel(ctk.CTkFrame):
                     '#0090FF', '#2C6337', '#0400FF',
                     '#B0B0B0']
 
-            ax.pie(sizes, colors = colors[:len(labels)], autopct='%1.1f%%', 
+            ax.pie(sizes, colors = colors[:len(labels)], 
                    startangle = 140, textprops = {'fontsize':9, 'color': '#1E293B'})
             
             ax.legend  ( labels = labels,
