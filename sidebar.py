@@ -27,7 +27,7 @@ class CategorySidebar(ctk.CTkFrame):
         self.category_title = ctk.CTkLabel(self, text="Shopping Categories",
                                             font=("Segoe UI", 18, "bold"),
                                             fg_color="transparent",
-                                            text_color= "#1E293B", 
+                                            text_color= "#FFFFFF", 
                                             corner_radius= 12)        
         self.category_title.pack(ipadx=16, ipady=6, pady=(0, 15), fill="x", padx=20)
 

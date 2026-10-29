@@ -3,7 +3,7 @@ from sidebar import CategorySidebar
 from list import ShoppingListPanel
 from analytics import AnalyticsPanel
 
-ctk.set_appearance_mode("light")
+ctk.set_appearance_mode("dark")
 #main window
 class App(ctk.CTk):
     def __init__(self):
