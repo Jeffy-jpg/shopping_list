@@ -5,7 +5,7 @@ from tkinter import messagebox
 
 class CategorySidebar(ctk.CTkFrame):
     def __init__(self, master):
-        super().__init__(master, width=250, corner_radius=0, fg_color= "transparent")
+        super().__init__(master, width=250, corner_radius=0, fg_color= "white")
 
 
         DATA_FILE = "shopping_data.json"

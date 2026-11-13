@@ -6,7 +6,7 @@ from typing import Tuple
 
 class ShoppingListPanel (ctk.CTkFrame):
     def __init__(self,master):
-        super().__init__(master, width=350, corner_radius=8)
+        super().__init__(master, width = 500, corner_radius=8, fg_color="blue")
 
         self.DATA_FILE = "shopping_data.json"
 
