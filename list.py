@@ -6,7 +6,7 @@ from typing import Tuple
 
 class ShoppingListPanel (ctk.CTkFrame):
     def __init__(self,master):
-        super().__init__(master, width=350, corner_radius=8)
+        super().__init__(master, width = 500, corner_radius=8, fg_color="white")
 
         self.DATA_FILE = "shopping_data.json"
 
@@ -26,7 +26,7 @@ class ShoppingListPanel (ctk.CTkFrame):
         self.header_frame = ctk.CTkFrame(self, fg_color="transparent")
         self.header_frame.pack(fill="x", pady=15, padx=20)
 
-        self.title_label = ctk.CTkLabel(self.header_frame, text=f"{self.current_category} List",
+        self.title_label = ctk.CTkLabel(self.header_frame, text=f"{self.current_category} Stock",
                                         font=("Segoe UI", 18, "bold"))
         self.title_label.pack(side="left", anchor="w")
 
@@ -60,31 +60,33 @@ class ShoppingListPanel (ctk.CTkFrame):
             qty = item["quantity"]
             price = item["price"]
 
-            item_row = ctk.CTkFrame(self.scroll_frame, fg_color="transparent")
-            item_row.pack(pady=5, padx=5, fill="x")
+            item_row = ctk.CTkFrame(self.scroll_frame, fg_color="#4a4a4a")
+            item_row.pack(pady=10, padx=5, fill="x")
             self.row_frames.append(item_row)
 
-            cb = ctk.CTkCheckBox(item_row, text = item_name, font=("segoe UI", 13))
-            if is_checked:
-                cb.select()
-
-            cb.configure(command=lambda i= index, c=cb: self.toggle_item(i,c))
-            cb.pack(side="left", fill="x", expand=True)
-            self.checkbox_widget.append(cb)
+            #cb = ctk.CTkCheckBx(item_row, text = item_name, font=("segoe UI", 13))
+            #if is_checked:
+                #cb.select()
+            item_label = ctk.CTkLabel(item_row, text =item_name, font =("segoe UI", 15, "bold"))
+            item_label.pack(side="left", fill="x", expand=False, padx=10, pady=10)
+            #cb.configure(command=lambda i= index, c=cb: self.toggle_item(i,c))
+            #cb.pack(side="left", fill="x", expand=True)
+            #self.checkbox_widget.append(cb)
 
             total_cost = qty * price
-            info_text = f"x{qty} | ${total_cost:.2f}" if price > 0 else f"x{qty}" 
+            info_text = f"Current Stock:" 
 
-            info_label = ctk.CTkLabel(item_row, text = info_text,
-                                      font=("Segoe UI", 12, "italic"),
-                                      text_color="#64748B")
-            info_label.pack(side="left", padx=10)
 
             edit_btn = ctk.CTkButton(item_row, text ="✎", width=28, height=28,
                                      fg_color="#3B82F6", hover_color="#2563EB",
                                      font=("Segoe UI", 12),
                                      command=lambda i= index, it=item: self.open_edit_popup(i, it))
-            edit_btn.pack(side="right", padx=(5,0))
+            edit_btn.pack(side="right", padx=(10), pady=10)
+
+            info_label = ctk.CTkLabel(item_row, text = info_text,
+                                      font=("Segoe UI", 12, "italic"),
+                                      text_color="#64748B")
+            info_label.pack(side="right", padx=10, pady=10)
 
     def open_add_popup(self):
         AddItemModal(self)
