@@ -11,11 +11,20 @@ class ShoppingListPanel (ctk.CTkFrame):
         self.DATA_FILE = "shopping_data.json"
 
 
-        self.shopping_data = {
-            "Groceries": [{"name":"milk", "checked": False, "quantity":1, "price":2.50 }],
-            "Hardware": [{"name":"hammer", "checked": False, "quantity":1, "price":15.00 }],
-            "Clothing":[{"name":"T-Shirt", "checked": False, "quantity":1, "price":50.00 }]
-        }
+        self.shopping_data = { }
+         #   "Groceries": [{"name":"milk", "date": "12/2/3", "quantity":1, "price":2.50 }],
+          #  "Hardware": [{"name":"hammer", "date": "12/2/3", "quantity":1, "price":15.00 }],
+           # "Clothing":[{"name":"T-Shirt", "date": "12/2/3", "quantity":1, "price":50.00 }]
+        
+
+
+        self.item_history = {}
+           # "item_ID": name + date : [{ "adj_method": "Manual Adjust", "difference": 45,
+            #                            "new_fig": 100, "comment": "Fixing the system amount", 
+             #                           "time_changed": "adding date format here"}]
+        
+
+
         self.current_category = "Groceries"
 
         self.load_from_file()
