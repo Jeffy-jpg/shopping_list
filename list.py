@@ -6,16 +6,25 @@ from typing import Tuple
 
 class ShoppingListPanel (ctk.CTkFrame):
     def __init__(self,master):
-        super().__init__(master, width = 500, corner_radius=8, fg_color="white")
+        super().__init__(master, width = 500, corner_radius=8, fg_color="#1e1e1e")
 
         self.DATA_FILE = "shopping_data.json"
 
 
-        self.shopping_data = {
-            "Groceries": [{"name":"milk", "checked": False, "quantity":1, "price":2.50 }],
-            "Hardware": [{"name":"hammer", "checked": False, "quantity":1, "price":15.00 }],
-            "Clothing":[{"name":"T-Shirt", "checked": False, "quantity":1, "price":50.00 }]
-        }
+        self.shopping_data = { }
+         #   "Groceries": [{"name":"milk", "date": "12/2/3", "quantity":1, "price":2.50 }],
+          #  "Hardware": [{"name":"hammer", "date": "12/2/3", "quantity":1, "price":15.00 }],
+           # "Clothing":[{"name":"T-Shirt", "date": "12/2/3", "quantity":1, "price":50.00 }]
+        
+
+
+        self.item_history = {}
+           # "item_ID": name + date : [{ "adj_method": "Manual Adjust", "difference": 45,
+            #                            "new_fig": 100, "comment": "Fixing the system amount", 
+             #                           "time_changed": "adding date format here"}]
+        
+
+
         self.current_category = "Groceries"
 
         self.load_from_file()
@@ -74,7 +83,7 @@ class ShoppingListPanel (ctk.CTkFrame):
             #self.checkbox_widget.append(cb)
 
             total_cost = qty * price
-            info_text = f"Current Stock:" 
+            info_text = f"Current Stock: {qty}" 
 
 
             edit_btn = ctk.CTkButton(item_row, text ="✎", width=28, height=28,
@@ -85,7 +94,7 @@ class ShoppingListPanel (ctk.CTkFrame):
 
             info_label = ctk.CTkLabel(item_row, text = info_text,
                                       font=("Segoe UI", 12, "italic"),
-                                      text_color="#64748B")
+                                      text_color="white")
             info_label.pack(side="right", padx=10, pady=10)
 
     def open_add_popup(self):
@@ -174,15 +183,18 @@ class AddItemModal(ctk.CTkToplevel):
         lbl = ctk.CTkLabel(self, text="New Item Details", font=("Segoe UI", 16, "bold"))
         lbl.pack(pady=10)
 
+        self.name_label =ctk.CTkLabel(self, text="Item Name", font=("Segoe UI", 12, "bold"))
+        self.name_label.pack(fill="x", expand=False, padx=30, pady=(5,0))
+
         self.name_entry = ctk.CTkEntry(self,placeholder_text="Item Name")
-        self.name_entry.pack(fill="x", padx=30, pady=5)
+        self.name_entry.pack(fill="x", padx=30, pady=5)  
 
         self.qty_entry = ctk.CTkEntry(self, placeholder_text="Quantity")
         self.qty_entry.insert(0,"1")
         self.qty_entry.pack(fill="x", padx=30, pady=5)
 
         self.price_entry = ctk.CTkEntry(self, placeholder_text="Price ($)")
-        self.price_entry.pack(fill="x", pady=30, padx=5)
+        self.price_entry.pack(fill="x", pady=30, padx=5, expand =False)
 
         btn_frame = ctk.CTkFrame(self, fg_color="transparent")
         btn_frame.pack(fill="x", padx=30, pady=5)
@@ -222,45 +234,60 @@ class EditItemModal(ctk.CTkToplevel):
         self.item_index = item_idex
 
         self.title("Edit Item Details")
-        self.geometry("300x290")
+        #self.geometry("300x290")
         self.resizable(False, False)
 
         self.attributes("-topmost", True)
         self.grab_set()
 
-        lbl = ctk.CTkLabel(self, text="Modify Item", font=("Segoe UI", 16, "bold"))
+        self.mainframe = ctk.CTkFrame(self, fg_color= "transparent", corner_radius=0)
+        self.mainframe.pack(padx=10, pady=10, fill ="both", expand=True)
+
+        lbl = ctk.CTkLabel(self.mainframe, text="Modify Item", font=("Segoe UI", 16, "bold"))
         lbl.pack(pady=10)
 
-        self.name_entry = ctk.CTkEntry(self, placeholder_text="Item Name")
+        #Item name section
+        self.name_label=ctk.CTkLabel(self.mainframe, text="Item Name:",
+                                      font=("Segoe UI", 12, "bold"))
+        self.name_label.pack(anchor="w", expand=True, padx=30, pady=(5,0))
+        self.name_entry = ctk.CTkEntry(self.mainframe, placeholder_text="Item Name")
         self.name_entry.insert(0, item_dict["name"])
-        self.name_entry.pack(fill="x", padx=30, pady=5)
+        self.name_entry.pack(fill="x", padx=30, pady=(0,5))
 
-        self.qty_entry = ctk.CTkEntry(self, placeholder_text="Quantity")
+        #quantity section
+        self.qty_label=ctk.CTkLabel(self.mainframe, text="Quantity:",
+                                      font=("Segoe UI", 12, "bold"))
+        self.qty_label.pack(anchor="w", expand=True, padx=30, pady=(5,0))
+        self.qty_entry = ctk.CTkEntry(self.mainframe, placeholder_text="Quantity")
         self.qty_entry.insert(0, str(item_dict["quantity"]))
-        self.qty_entry.pack(fill="x", padx=30, pady=5)
+        self.qty_entry.pack(fill="x", padx=30, pady=(0,5))
 
-        self.price_entry = ctk.CTkEntry(self, placeholder_text="Price ($)")
+        #price section
+        self.price_label=ctk.CTkLabel(self.mainframe, text="Price:",
+                                      font=("Segoe UI", 12, "bold"))
+        self.price_label.pack(anchor="w", expand=True, padx=30, pady=(5,0))
+        self.price_entry = ctk.CTkEntry(self.mainframe, placeholder_text="Price ($)")
         self.price_entry.insert(0, str(item_dict["price"]))
-        self.price_entry.pack(fill="x", padx=30, pady=5)
+        self.price_entry.pack(fill="x", padx=30, pady=(0,5))
 
-        btn_frame = ctk.CTkFrame(self, fg_color="transparent")
+        btn_frame = ctk.CTkFrame(self.mainframe, fg_color="transparent")
         btn_frame.pack(fill="x", padx=30, pady=(15,5))
 
         cancel_btn = ctk.CTkButton(btn_frame, text="cancel", width= 110,
                                   fg_color="#64748B", command=self.destroy)
-        cancel_btn.pack(side="left")
+        cancel_btn.pack(side="left", padx=(5,0))
 
         save_btn = ctk.CTkButton(btn_frame, text="Save Changes", width=110, fg_color="#10B981",
                                  hover_color="#059669", command=self.save_data)
-        save_btn.pack(side="right")
+        save_btn.pack(side="right", padx= (5,5))
 
-        del_frame =ctk.CTkFrame(self, fg_color="transparent")
+        del_frame =ctk.CTkFrame(self, fg_color="transparent", width=110)
         del_frame.pack(fill="x", padx=30, pady=5)
 
         del_btn= ctk.CTkButton(del_frame, text="🗑 Delete Item", fg_color="#EF4444",
                                hover_color="#DC2626", font=("Segoe UI", 12, "bold"),
                                command=self.delete_data)
-        del_btn.pack(fill="x")
+        del_btn.pack(fill="x",pady=5)
 
     def save_data(self):
         name = self.name_entry.get().strip()
