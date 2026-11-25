@@ -1,30 +1,22 @@
 import json
 import os
 import customtkinter as ctk
+import inventory_db
 from typing import Tuple
+from datetime import datetime
+
 
 
 class ShoppingListPanel (ctk.CTkFrame):
     def __init__(self,master):
         super().__init__(master, width = 500, corner_radius=8, fg_color="#1e1e1e")
 
-        self.DATA_FILE = "shopping_data.json"
+        inventory_db.init_db()
 
 
-        self.shopping_data = { }
-         #   "Groceries": [{"name":"milk", "date": "12/2/3", "quantity":1, "price":2.50 }],
-          #  "Hardware": [{"name":"hammer", "date": "12/2/3", "quantity":1, "price":15.00 }],
-           # "Clothing":[{"name":"T-Shirt", "date": "12/2/3", "quantity":1, "price":50.00 }]
-        
-
-
+        self.shopping_data = {}
         self.item_history = {}
-           # "item_ID": name + date : [{ "adj_method": "Manual Adjust", "difference": 45,
-            #                            "new_fig": 100, "comment": "Fixing the system amount", 
-             #                           "time_changed": "adding date format here"}]
         
-
-
         self.current_category = "Groceries"
 
         self.load_from_file()
@@ -65,7 +57,6 @@ class ShoppingListPanel (ctk.CTkFrame):
 
         for index, item in enumerate(self.shopping_data[category_name]):
             item_name = item["name"]
-            is_checked = item["checked"]
             qty = item["quantity"]
             price = item["price"]
 
@@ -104,28 +95,50 @@ class ShoppingListPanel (ctk.CTkFrame):
         EditItemModal(self, index, item_dict)
 
     def update_item_details(self, index, updated_name, updated_qty, updated_price):
-        self.shopping_data[self.current_category][index]["name"]=updated_name
-        self.shopping_data[self.current_category][index]["quantity"] = updated_qty
-        self.shopping_data[self.current_category][index]["price"]= updated_price
+        item = self.shopping_data[self.current_category][index]
+        old_qty = item ["quantity"]
+        date_added = item.get("date_added", "")
+
+        diff = updated_qty - old_qty
+        if diff != 0:
+            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            item_id = f"{item['name']}_{date_added}"
+            self.item_history.setdefault(item_id, []).append({
+                "adj_method": "Manual Adjust",
+                "difference": diff,
+                "new_fig": updated_qty,
+                "comment": "User Update",
+                "time_changed": now
+            })
+
+        item["name"] = updated_name
+        item["quanity"] = updated_qty
+        item["price"] = updated_price
         self.save_to_file()
         self.refresh_list(self.current_category)
 
-    def append_new_item(self, name, quantity, price):
+    def append_new_item(self, name, quantity, price, date_added):
         if self.current_category not in self.shopping_data:
             self.shopping_data[self.current_category] = []
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.shopping_data[self.current_category].append({
             "name":name,
-            "checked":False,
+            "date_added":now,
             "quantity": quantity,
             "price": price
         })
+        item_id = f"{name}_{now}"
+        self.item_history.setdefault(item_id, []).append({
+            "adj_method": "Initial Stock",
+            "difference": quantity,
+            "new_figure": quantity,
+            "comment": "Item added to inventory",
+            "time_changed": now
+
+        })
+
         self.save_to_file()
         self.refresh_list(self.current_category)
-    
-    def toggle_item(self, index, checkbox_widget):
-        new_state = checkbox_widget.get() == 1
-        self.shopping_data[self.current_category][index]["checked"] = new_state
-        self.save_to_file()
 
     def delete_item(self, index):
         self.shopping_data[self.current_category].pop(index)
@@ -139,34 +152,23 @@ class ShoppingListPanel (ctk.CTkFrame):
 
     def save_to_file(self):
         try:
-            with open(self.DATA_FILE, "w") as f:
-                json.dump(self.shopping_data, f, indent=4)
-            print("Data Successfully Saved")
+            inventory_db.save_all(self.shopping_data, self.item_history)
+            print("Data sucessfully saved")
 
         except Exception as e: 
             print(f"Error saving file: {e}")
 
 
-        
-        analytics = getattr(self.master, "analytics_frame", None)
-        if analytics:
-            analytics.update_analytics()
-
     def load_from_file(self):
-        if os.path.exists(self.DATA_FILE):
-            try:
-                with open(self.DATA_FILE, "r") as f:
-                    self.shopping_data = json.load(f)
+        try:
+            self.shopping_data, self.item_history = inventory_db.load_all()
 
-                if self.shopping_data:
-                    self.current_category = list(self.shopping_data.keys())[0]
-                print("Successfully Loaded Data")
+            if self.shopping_data:
+                self.current_category = list(self.shopping_data.keys())[0]
+            print("File loaded Successfully")
 
-            except Exception as e:
-                print(f"Error Loading Data: {e}")
-                
-
-
+        except Exception as e:
+            print(f"Error Loading Data: {e}")               
 
 class AddItemModal(ctk.CTkToplevel):
     def __init__(self, parent_panel):
@@ -174,7 +176,6 @@ class AddItemModal(ctk.CTkToplevel):
         self.parent_panel = parent_panel
 
         self.title("Add Item To List")
-        self.geometry("300x250")
         self.resizable(False, False)
 
         self.attributes("-topmost", True)
