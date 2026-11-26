@@ -2,7 +2,7 @@ import json
 import os
 import customtkinter as ctk
 import inventory_db
-from typing import Tuple
+from tkinter import messagebox
 from datetime import datetime
 
 
@@ -31,11 +31,23 @@ class ShoppingListPanel (ctk.CTkFrame):
                                         font=("Segoe UI", 18, "bold"))
         self.title_label.pack(side="left", anchor="w")
 
+        #TODO add commands to the import button
+        self.import_btn = ctk.CTkButton(self.header_frame, text = "Import List", width=90,
+                                          fg_color="#10B981", hover_color="#059669",
+                                          font=("Segoe UI", 12, "bold"))
+        self.import_btn.pack(side="right", padx=10)
+
+        #TODO add command to the export button
+        self.export_btn = ctk.CTkButton(self.header_frame, text= "Export List", width=90,
+                                          fg_color="#10B981", hover_color="#059669",
+                                          font=("Segoe UI", 12, "bold"))
+        self.export_btn.pack(side="right", padx=10)
+
         self.open_add_btn = ctk.CTkButton(self.header_frame, text= "Add Item", width=90,
                                           fg_color="#10B981", hover_color="#059669",
                                           font=("Segoe UI", 12, "bold"), 
                                           command=self.open_add_popup)
-        self.open_add_btn.pack(side="right")
+        self.open_add_btn.pack(side="right", padx=10)
 
         self.scroll_frame = ctk.CTkScrollableFrame(self, fg_color="transparent")
         self.scroll_frame.pack(fill="both", expand = True, padx = 15, pady = (0,10))  
@@ -64,17 +76,13 @@ class ShoppingListPanel (ctk.CTkFrame):
             item_row.pack(pady=10, padx=5, fill="x")
             self.row_frames.append(item_row)
 
-            #cb = ctk.CTkCheckBx(item_row, text = item_name, font=("segoe UI", 13))
-            #if is_checked:
-                #cb.select()
+
             item_label = ctk.CTkLabel(item_row, text =item_name, font =("segoe UI", 15, "bold"))
             item_label.pack(side="left", fill="x", expand=False, padx=10, pady=10)
-            #cb.configure(command=lambda i= index, c=cb: self.toggle_item(i,c))
-            #cb.pack(side="left", fill="x", expand=True)
-            #self.checkbox_widget.append(cb)
+
 
             total_cost = qty * price
-            info_text = f"Current Stock:{qty} || Price: {price}" 
+            info_text = f"Current Stock:{qty} || UnitPrice: {price}" 
 
 
             edit_btn = ctk.CTkButton(item_row, text ="✎", width=28, height=28,
@@ -184,29 +192,50 @@ class AddItemModal(ctk.CTkToplevel):
         lbl = ctk.CTkLabel(self, text="New Item Details", font=("Segoe UI", 16, "bold"))
         lbl.pack(pady=10)
 
-        self.name_label =ctk.CTkLabel(self, text="Item Name", font=("Segoe UI", 12, "bold"))
-        self.name_label.pack(fill="x", expand=False, padx=30, pady=(5,0))
-
+        #NAME ENTRY AND LABEL
+        self.name_label =ctk.CTkLabel(self, text="Item Name:", font=("Segoe UI", 12, "bold"))
+        self.name_label.pack(anchor = "w", expand=True, padx=30, pady=(5,0))
         self.name_entry = ctk.CTkEntry(self,placeholder_text="Item Name")
-        self.name_entry.pack(fill="x", padx=30, pady=5)  
+        self.name_entry.pack(fill="x", padx=30, pady=(0,5))  
 
+        #QUANTITY ENTRY AND LABEL
+        self.qty_label = ctk.CTkLabel(self,  text="Quantity:", font=("Segoe UI", 12, "bold"))
+        self.qty_label.pack(anchor = "w", expand=True, padx=30, pady=(5,0))
         self.qty_entry = ctk.CTkEntry(self, placeholder_text="Quantity")
         self.qty_entry.insert(0,"1")
-        self.qty_entry.pack(fill="x", padx=30, pady=5)
+        self.qty_entry.pack(fill="x", padx=30, pady=(0,5))
 
+        #PRICE ENTRY AND LABEL
+        self.price_label = ctk.CTkLabel(self,  text="Price:", font=("Segoe UI", 12, "bold"))
+        self.price_label.pack(anchor = "w", expand=True, padx=30, pady=(5,0))        
         self.price_entry = ctk.CTkEntry(self, placeholder_text="Price ($)")
-        self.price_entry.pack(fill="x", pady=5, padx=30, expand =False)
+        self.price_entry.pack(fill="x", pady=(0,5), padx=30, expand =False)
+
+        #LOW STOCK ENTRY AND LABEL
+        self.lowstock_label = ctk.CTkLabel(self,  text="Low Stock Amount:",
+                                            font=("Segoe UI", 12, "bold"))
+        self.lowstock_label.pack(anchor = "w", expand=True, padx=30, pady=(5,0))        
+        self.lowstock_entry = ctk.CTkEntry(self, placeholder_text="Low Stock")
+        self.lowstock_entry.insert(0, "0")
+        self.lowstock_entry.pack(fill="x", pady=(0,5), padx=30, expand =False)
+
+
+        #TODO display date and time created here
+        self.date_label = ctk.CTkLabel(self, text = f"Date Created: ",
+                                        font=("Segoe UI", 12, "bold"))
+        self.date_label.pack(anchor = "w", expand=True, padx=30, pady=(5,0))
+        
 
         btn_frame = ctk.CTkFrame(self, fg_color="transparent")
-        btn_frame.pack(fill="x", padx=30, pady=5)
+        btn_frame.pack(fill="x", padx=30, pady=20)
 
         cancel_btn = ctk.CTkButton(btn_frame, text="Cancel", width=110, fg_color="#64748B",
                                    command=self.destroy)
-        cancel_btn.pack(side="left")
+        cancel_btn.pack(side="left", padx=(0,5))
 
         save_btn = ctk.CTkButton(btn_frame, text = "Add Item", width=110, fg_color="#059669",
                                command=self.add_data)
-        save_btn.pack(side="right")
+        save_btn.pack(side="right", padx=(5,0))
 
     def add_data(self):
         name = self.name_entry.get().strip()
@@ -271,24 +300,36 @@ class EditItemModal(ctk.CTkToplevel):
         self.price_entry.insert(0, str(item_dict["price"]))
         self.price_entry.pack(fill="x", padx=30, pady=(0,5))
 
+        self.lowstock_label = ctk.CTkLabel(self.mainframe,  text="Low Stock Amount:",
+                                            font=("Segoe UI", 12, "bold"))
+        self.lowstock_label.pack(anchor = "w", expand=True, padx=30, pady=(5,0))        
+        self.lowstock_entry = ctk.CTkEntry(self.mainframe, placeholder_text="Low Stock")
+        self.lowstock_entry.insert(0, "0")
+        self.lowstock_entry.pack(fill="x", pady=(0,5), padx=30, expand =False)
+
+        #TODO add date modified display here
+        self.mod_date_label = ctk.CTkLabel(self.mainframe, text= f"Date Modified:",
+                                           font=("Segoe UI", 12, "bold"))
+        self.mod_date_label.pack(anchor="w", expand=True, padx=30, pady=(5,0))
+
         btn_frame = ctk.CTkFrame(self.mainframe, fg_color="transparent")
         btn_frame.pack(fill="x", padx=30, pady=(15,5))
 
-        cancel_btn = ctk.CTkButton(btn_frame, text="cancel", width= 110,
+        cancel_btn = ctk.CTkButton(btn_frame, text="cancel", width = 110,
                                   fg_color="#64748B", command=self.destroy)
-        cancel_btn.pack(side="left", padx=(5,0))
+        cancel_btn.pack(side="left", padx=(0,5))
 
         save_btn = ctk.CTkButton(btn_frame, text="Save Changes", width=110, fg_color="#10B981",
                                  hover_color="#059669", command=self.save_data)
-        save_btn.pack(side="right", padx= (5,5))
+        save_btn.pack(side="right", padx= (5,0))
 
-        del_frame =ctk.CTkFrame(self, fg_color="transparent", width=110)
+        del_frame =ctk.CTkFrame(self.mainframe, fg_color="transparent")
         del_frame.pack(fill="x", padx=30, pady=5)
 
         del_btn= ctk.CTkButton(del_frame, text="🗑 Delete Item", fg_color="#EF4444",
                                hover_color="#DC2626", font=("Segoe UI", 12, "bold"),
                                command=self.delete_data)
-        del_btn.pack(fill="x",pady=5)
+        del_btn.pack(fill="x")
 
     def save_data(self):
         name = self.name_entry.get().strip()
@@ -310,5 +351,9 @@ class EditItemModal(ctk.CTkToplevel):
             self.destroy()
 
     def delete_data(self):
-        self.parent_panel.delete_item(self.item_index)
-        self.destroy()
+        confirm = messagebox.askyesno("Confirmation",
+                                      f"Are you sure you want to delete this item?")
+        if confirm: 
+            self.parent_panel.delete_item(self.item_index)
+            self.destroy()
+            return

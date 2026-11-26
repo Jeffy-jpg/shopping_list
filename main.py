@@ -32,8 +32,12 @@ class App(ctk.CTk):
         self.nav_bar = ctk.CTkFrame(self, fg_color="transparent", corner_radius=0)
         self.nav_bar.grid(row= 0, column =2, columnspan=2,  sticky ="nsew", padx=20, pady =(20, 0))
 
-        self.noti_btn = ctk.CTkButton(self.nav_bar, text = "🕭", font=("arial", 20, "bold"), corner_radius= 8)
+        self.noti_btn = ctk.CTkButton(self.nav_bar, text = "Notifications 🕭",
+                                       font=("arial", 15, "bold"), corner_radius= 8)
         self.noti_btn.pack(side="right", pady = 10, padx = 10, ipadx = 10, ipady =5)
+        self.history_btn = ctk.CTkButton(self.nav_bar, text = "Item History",
+                                       font=("arial", 15, "bold"), corner_radius= 8)
+        self.history_btn.pack(side="right", pady = 10, padx = 10, ipadx = 10, ipady =5)
 
         #item list frame
         self.list_frame = ShoppingListPanel(self)
