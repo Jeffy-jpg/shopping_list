@@ -39,9 +39,6 @@ class App(ctk.CTk):
         self.list_frame = ShoppingListPanel(self)
         self.list_frame.grid(row =1, column = 2, rowspan=2, columnspan = 2, padx=20, pady=20, sticky ="nsew")
 
-        #charts Frame
-        #self.analytics_frame = AnalyticsPanel(self)
-        #self.analytics_frame.grid(row=0, column = 2, sticky = "nsew", padx=(0,20), pady=20)
 
     def change_category(self, category_name):
         self.list_frame.refresh_list(category_name)
