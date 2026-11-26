@@ -220,7 +220,7 @@ class AddItemModal(ctk.CTkToplevel):
         self.lowstock_entry.pack(fill="x", pady=(0,5), padx=30, expand =False)
 
 
-        #TODO add date added time here
+        #TODO display date and time created here
         self.date_label = ctk.CTkLabel(self, text = f"Date Created: ",
                                         font=("Segoe UI", 12, "bold"))
         self.date_label.pack(anchor = "w", expand=True, padx=30, pady=(5,0))
@@ -300,24 +300,36 @@ class EditItemModal(ctk.CTkToplevel):
         self.price_entry.insert(0, str(item_dict["price"]))
         self.price_entry.pack(fill="x", padx=30, pady=(0,5))
 
+        self.lowstock_label = ctk.CTkLabel(self.mainframe,  text="Low Stock Amount:",
+                                            font=("Segoe UI", 12, "bold"))
+        self.lowstock_label.pack(anchor = "w", expand=True, padx=30, pady=(5,0))        
+        self.lowstock_entry = ctk.CTkEntry(self.mainframe, placeholder_text="Low Stock")
+        self.lowstock_entry.insert(0, "0")
+        self.lowstock_entry.pack(fill="x", pady=(0,5), padx=30, expand =False)
+
+        #TODO add date modified display here
+        self.mod_date_label = ctk.CTkLabel(self.mainframe, text= f"Date Modified:",
+                                           font=("Segoe UI", 12, "bold"))
+        self.mod_date_label.pack(anchor="w", expand=True, padx=30, pady=(5,0))
+
         btn_frame = ctk.CTkFrame(self.mainframe, fg_color="transparent")
         btn_frame.pack(fill="x", padx=30, pady=(15,5))
 
-        cancel_btn = ctk.CTkButton(btn_frame, text="cancel", width= 110,
+        cancel_btn = ctk.CTkButton(btn_frame, text="cancel", width = 110,
                                   fg_color="#64748B", command=self.destroy)
-        cancel_btn.pack(side="left", padx=(5,0))
+        cancel_btn.pack(side="left", padx=(0,5))
 
         save_btn = ctk.CTkButton(btn_frame, text="Save Changes", width=110, fg_color="#10B981",
                                  hover_color="#059669", command=self.save_data)
-        save_btn.pack(side="right", padx= (5,5))
+        save_btn.pack(side="right", padx= (5,0))
 
-        del_frame =ctk.CTkFrame(self, fg_color="transparent", width=110)
+        del_frame =ctk.CTkFrame(self.mainframe, fg_color="transparent")
         del_frame.pack(fill="x", padx=30, pady=5)
 
         del_btn= ctk.CTkButton(del_frame, text="🗑 Delete Item", fg_color="#EF4444",
                                hover_color="#DC2626", font=("Segoe UI", 12, "bold"),
                                command=self.delete_data)
-        del_btn.pack(fill="x",pady=5)
+        del_btn.pack(fill="x")
 
     def save_data(self):
         name = self.name_entry.get().strip()
