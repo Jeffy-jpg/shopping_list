@@ -2,7 +2,7 @@ import json
 import os
 import customtkinter as ctk
 import inventory_db
-from typing import Tuple
+from tkinter import messagebox
 from datetime import datetime
 
 
@@ -184,21 +184,27 @@ class AddItemModal(ctk.CTkToplevel):
         lbl = ctk.CTkLabel(self, text="New Item Details", font=("Segoe UI", 16, "bold"))
         lbl.pack(pady=10)
 
-        self.name_label =ctk.CTkLabel(self, text="Item Name", font=("Segoe UI", 12, "bold"))
-        self.name_label.pack(fill="x", expand=False, padx=30, pady=(5,0))
-
+        #NAME ENTRY AND LABEL
+        self.name_label =ctk.CTkLabel(self, text="Item Name:", font=("Segoe UI", 12, "bold"))
+        self.name_label.pack(anchor = "w", expand=True, padx=30, pady=(5,0))
         self.name_entry = ctk.CTkEntry(self,placeholder_text="Item Name")
-        self.name_entry.pack(fill="x", padx=30, pady=5)  
+        self.name_entry.pack(fill="x", padx=30, pady=(0,5))  
 
+        #QUANTITY ENTRY AND LABEL
+        self.qty_label = ctk.CTkLabel(self,  text="Quantity:", font=("Segoe UI", 12, "bold"))
+        self.qty_label.pack(anchor = "w", expand=True, padx=30, pady=(5,0))
         self.qty_entry = ctk.CTkEntry(self, placeholder_text="Quantity")
         self.qty_entry.insert(0,"1")
-        self.qty_entry.pack(fill="x", padx=30, pady=5)
+        self.qty_entry.pack(fill="x", padx=30, pady=(0,5))
 
+        #PRICE ENTRY AND LABEL
+        self.price_label = ctk.CTkLabel(self,  text="Price:", font=("Segoe UI", 12, "bold"))
+        self.price_label.pack(anchor = "w", expand=True, padx=30, pady=(5,0))        
         self.price_entry = ctk.CTkEntry(self, placeholder_text="Price ($)")
-        self.price_entry.pack(fill="x", pady=5, padx=30, expand =False)
+        self.price_entry.pack(fill="x", pady=(0,5), padx=30, expand =False)
 
         btn_frame = ctk.CTkFrame(self, fg_color="transparent")
-        btn_frame.pack(fill="x", padx=30, pady=5)
+        btn_frame.pack(fill="x", padx=30, pady=20)
 
         cancel_btn = ctk.CTkButton(btn_frame, text="Cancel", width=110, fg_color="#64748B",
                                    command=self.destroy)
@@ -310,5 +316,9 @@ class EditItemModal(ctk.CTkToplevel):
             self.destroy()
 
     def delete_data(self):
-        self.parent_panel.delete_item(self.item_index)
-        self.destroy()
+        confirm = messagebox.askyesno("Confirmation",
+                                      f"Are you sure you want to delete this item?")
+        if confirm: 
+            self.parent_panel.delete_item(self.item_index)
+            self.destroy()
+            return
