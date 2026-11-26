@@ -211,16 +211,31 @@ class AddItemModal(ctk.CTkToplevel):
         self.price_entry = ctk.CTkEntry(self, placeholder_text="Price ($)")
         self.price_entry.pack(fill="x", pady=(0,5), padx=30, expand =False)
 
+        #LOW STOCK ENTRY AND LABEL
+        self.lowstock_label = ctk.CTkLabel(self,  text="Low Stock Amount:",
+                                            font=("Segoe UI", 12, "bold"))
+        self.lowstock_label.pack(anchor = "w", expand=True, padx=30, pady=(5,0))        
+        self.lowstock_entry = ctk.CTkEntry(self, placeholder_text="Low Stock")
+        self.lowstock_entry.insert(0, "0")
+        self.lowstock_entry.pack(fill="x", pady=(0,5), padx=30, expand =False)
+
+
+        #TODO add date added time here
+        self.date_label = ctk.CTkLabel(self, text = f"Date Created: ",
+                                        font=("Segoe UI", 12, "bold"))
+        self.date_label.pack(anchor = "w", expand=True, padx=30, pady=(5,0))
+        
+
         btn_frame = ctk.CTkFrame(self, fg_color="transparent")
         btn_frame.pack(fill="x", padx=30, pady=20)
 
         cancel_btn = ctk.CTkButton(btn_frame, text="Cancel", width=110, fg_color="#64748B",
                                    command=self.destroy)
-        cancel_btn.pack(side="left")
+        cancel_btn.pack(side="left", padx=(0,5))
 
         save_btn = ctk.CTkButton(btn_frame, text = "Add Item", width=110, fg_color="#059669",
                                command=self.add_data)
-        save_btn.pack(side="right")
+        save_btn.pack(side="right", padx=(5,0))
 
     def add_data(self):
         name = self.name_entry.get().strip()
