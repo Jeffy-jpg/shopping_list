@@ -31,11 +31,23 @@ class ShoppingListPanel (ctk.CTkFrame):
                                         font=("Segoe UI", 18, "bold"))
         self.title_label.pack(side="left", anchor="w")
 
+        #TODO add commands to the import button
+        self.import_btn = ctk.CTkButton(self.header_frame, text = "Import List", width=90,
+                                          fg_color="#10B981", hover_color="#059669",
+                                          font=("Segoe UI", 12, "bold"))
+        self.import_btn.pack(side="right", padx=10)
+
+        #TODO add command to the export button
+        self.export_btn = ctk.CTkButton(self.header_frame, text= "Export List", width=90,
+                                          fg_color="#10B981", hover_color="#059669",
+                                          font=("Segoe UI", 12, "bold"))
+        self.export_btn.pack(side="right", padx=10)
+
         self.open_add_btn = ctk.CTkButton(self.header_frame, text= "Add Item", width=90,
                                           fg_color="#10B981", hover_color="#059669",
                                           font=("Segoe UI", 12, "bold"), 
                                           command=self.open_add_popup)
-        self.open_add_btn.pack(side="right")
+        self.open_add_btn.pack(side="right", padx=10)
 
         self.scroll_frame = ctk.CTkScrollableFrame(self, fg_color="transparent")
         self.scroll_frame.pack(fill="both", expand = True, padx = 15, pady = (0,10))  
@@ -64,17 +76,13 @@ class ShoppingListPanel (ctk.CTkFrame):
             item_row.pack(pady=10, padx=5, fill="x")
             self.row_frames.append(item_row)
 
-            #cb = ctk.CTkCheckBx(item_row, text = item_name, font=("segoe UI", 13))
-            #if is_checked:
-                #cb.select()
+
             item_label = ctk.CTkLabel(item_row, text =item_name, font =("segoe UI", 15, "bold"))
             item_label.pack(side="left", fill="x", expand=False, padx=10, pady=10)
-            #cb.configure(command=lambda i= index, c=cb: self.toggle_item(i,c))
-            #cb.pack(side="left", fill="x", expand=True)
-            #self.checkbox_widget.append(cb)
+
 
             total_cost = qty * price
-            info_text = f"Current Stock:{qty} || Price: {price}" 
+            info_text = f"Current Stock:{qty} || UnitPrice: {price}" 
 
 
             edit_btn = ctk.CTkButton(item_row, text ="✎", width=28, height=28,
