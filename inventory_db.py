@@ -18,26 +18,25 @@ def init_db():
             CREATE TABLE IF NOT EXISTS item_history(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             item_id TEXT NOT NULL,
-            adjust_method TEXT,
-            total_difference INTERGER
-            new_fig INTEGER 
-            comment TEXT
-            date_updated TEXT
-            )
+            adj_method TEXT,
+            difference INTEGER,
+            new_figure INTEGER, 
+            comment TEXT,
+            date_updated TEXT)
         """)
 
 def save_all(shopping_data, item_history):
     with sqlite3.connect(DB_FILE) as conn:
         cur = conn.cursor()
 
-        cur.execute("DELETE FRORM inventory")
+        cur.execute("DELETE FROM inventory")
         inventory_rows = [
             (
             category,
             item ["name"], 
-            item.get("date_added", ""), 
+            item.get("date_added", ""), #TODO replace this when dateadded dunction is completed
             item ["quantity"],
-            item ["price"] 
+            item ["price"],
             )
             for category, items in shopping_data.items()
             for item in items
@@ -55,7 +54,7 @@ def save_all(shopping_data, item_history):
                 entry["difference"],
                 entry["new_figure"],
                 entry["comment"],
-                entry["date_updated"]
+                entry["date_updated"],
             )
         for item_id, entries in item_history.items()
         for entry in entries
@@ -63,8 +62,8 @@ def save_all(shopping_data, item_history):
 
         cur.executemany("""
         INSERT INTO item_history(
-        adj_method, difference, new_figure, comment, date_updated
-        VALUES (?,?,?,?,?){""", history_rows)
+        item_id, adj_method, difference, new_figure, comment, date_updated)
+        VALUES (?,?,?,?,?,?) """, history_rows)
 
 def load_all():
     shopping_data = {}
@@ -74,19 +73,19 @@ def load_all():
         conn.row_factory = sqlite3.Row
 
         for row in conn.execute("SELECT * FROM inventory"):
-            shopping_data.setdefault(row["category"], []).append([{
+            shopping_data.setdefault(row["category"], []).append({
                 "name": row ["name"],
                 "date_added": row["date_added"],
                 "quantity": row ["quantity"],
-                "price": row ["price"]
-            }])
+                "price": row ["price"],
+            })
 
         for row in conn.execute("SELECT * FROM item_history"):
-            item_history.setdefault(row["item_id"], []).append([{
+            item_history.setdefault(row["item_id"], []).append({
                 "adj_method": row ["adj_method"],
                 "difference": row ["difference"],
-                "new_fig": row ["new_fig"],
+                "new_figure": row ["new_figure"],
                 "comment": row ["comment"],
-                "time_changed": row ["time_changed"]
-            }])
+                "date_updated": row ["date_updated"],
+            })
     return shopping_data, item_history

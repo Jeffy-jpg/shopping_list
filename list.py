@@ -74,7 +74,7 @@ class ShoppingListPanel (ctk.CTkFrame):
             #self.checkbox_widget.append(cb)
 
             total_cost = qty * price
-            info_text = f"Current Stock: {qty}" 
+            info_text = f"Current Stock:{qty} || Price: {price}" 
 
 
             edit_btn = ctk.CTkButton(item_row, text ="✎", width=28, height=28,
@@ -106,18 +106,18 @@ class ShoppingListPanel (ctk.CTkFrame):
             self.item_history.setdefault(item_id, []).append({
                 "adj_method": "Manual Adjust",
                 "difference": diff,
-                "new_fig": updated_qty,
+                "new_figure": updated_qty,
                 "comment": "User Update",
-                "time_changed": now
+                "date_updated": now
             })
 
         item["name"] = updated_name
-        item["quanity"] = updated_qty
+        item["quantity"] = updated_qty
         item["price"] = updated_price
         self.save_to_file()
         self.refresh_list(self.current_category)
 
-    def append_new_item(self, name, quantity, price, date_added):
+    def append_new_item(self, name, quantity, price, now):
         if self.current_category not in self.shopping_data:
             self.shopping_data[self.current_category] = []
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -133,7 +133,7 @@ class ShoppingListPanel (ctk.CTkFrame):
             "difference": quantity,
             "new_figure": quantity,
             "comment": "Item added to inventory",
-            "time_changed": now
+            "date_updated": now
 
         })
 
@@ -195,7 +195,7 @@ class AddItemModal(ctk.CTkToplevel):
         self.qty_entry.pack(fill="x", padx=30, pady=5)
 
         self.price_entry = ctk.CTkEntry(self, placeholder_text="Price ($)")
-        self.price_entry.pack(fill="x", pady=30, padx=5, expand =False)
+        self.price_entry.pack(fill="x", pady=5, padx=30, expand =False)
 
         btn_frame = ctk.CTkFrame(self, fg_color="transparent")
         btn_frame.pack(fill="x", padx=30, pady=5)
@@ -224,7 +224,7 @@ class AddItemModal(ctk.CTkToplevel):
             except ValueError:
                 price = 0.0
 
-            self.parent_panel.append_new_item(name, quantity, price)
+            self.parent_panel.append_new_item(name, quantity, price, "2026-11-25") #TODO replace with date function
             self.destroy()
 
 class EditItemModal(ctk.CTkToplevel):
