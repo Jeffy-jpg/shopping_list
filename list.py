@@ -31,13 +31,13 @@ class ShoppingListPanel (ctk.CTkFrame):
                                         font=("Segoe UI", 18, "bold"))
         self.title_label.pack(side="left", anchor="w")
 
-        #TODO add commands to the import button
+        #TODO add commands to the import button salomo 
         self.import_btn = ctk.CTkButton(self.header_frame, text = "Import List", width=90,
                                           fg_color="#10B981", hover_color="#059669",
                                           font=("Segoe UI", 12, "bold"))
         self.import_btn.pack(side="right", padx=10)
 
-        #TODO add command to the export button
+        #TODO add command to the export button salomo 
         self.export_btn = ctk.CTkButton(self.header_frame, text= "Export List", width=90,
                                           fg_color="#10B981", hover_color="#059669",
                                           font=("Segoe UI", 12, "bold"))
@@ -108,6 +108,7 @@ class ShoppingListPanel (ctk.CTkFrame):
         date_added = item.get("date_added", "")
 
         diff = updated_qty - old_qty
+        #TODO tenzin review datetime
         if diff != 0:
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             item_id = f"{item['name']}_{date_added}"
@@ -220,7 +221,7 @@ class AddItemModal(ctk.CTkToplevel):
         self.lowstock_entry.pack(fill="x", pady=(0,5), padx=30, expand =False)
 
 
-        #TODO display date and time created here
+        #TODO display date and time created here Tenzin
         self.date_label = ctk.CTkLabel(self, text = f"Date Created: ",
                                         font=("Segoe UI", 12, "bold"))
         self.date_label.pack(anchor = "w", expand=True, padx=30, pady=(5,0))
@@ -252,8 +253,8 @@ class AddItemModal(ctk.CTkToplevel):
                 price = float(price_str) if price_str else 0.0
             except ValueError:
                 price = 0.0
-
-            self.parent_panel.append_new_item(name, quantity, price, "2026-11-25") #TODO replace with date function
+            #TODO replace with date function tenzin
+            self.parent_panel.append_new_item(name, quantity, price, "2026-11-25") 
             self.destroy()
 
 class EditItemModal(ctk.CTkToplevel):
@@ -307,7 +308,7 @@ class EditItemModal(ctk.CTkToplevel):
         self.lowstock_entry.insert(0, "0")
         self.lowstock_entry.pack(fill="x", pady=(0,5), padx=30, expand =False)
 
-        #TODO add date modified display here
+        #TODO add date modified display here tenzin
         self.mod_date_label = ctk.CTkLabel(self.mainframe, text= f"Date Modified:",
                                            font=("Segoe UI", 12, "bold"))
         self.mod_date_label.pack(anchor="w", expand=True, padx=30, pady=(5,0))
